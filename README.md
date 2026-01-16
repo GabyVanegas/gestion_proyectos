@@ -1,59 +1,173 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistema de Gestión de Proyectos y Tareas  
+### Laravel 12 & PostgreSQL
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Este proyecto es una solución técnica completa para la gestión de proyectos y tareas, desarrollada como parte de una evaluación técnica. Incluye autenticación de usuarios, manejo de roles, relaciones de base de datos y una API REST.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+##  Requisitos Previos
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- PHP 8.2 o superior  
+- Composer  
+- NPM  
+- PostgreSQL 15 o superior  
+- Servidor local (XAMPP, Laragon o servidor integrado de Laravel)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## Instalación y Configuración
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+### 1. Clonar el repositorio
+```bash
+git clone https://github.com/GabyVanegas/gestion_proyectos.git
+cd gestion-proyectos-prueba
+```
+### 2. Instalar dependencias de PHP
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### 3. Instalar y compilar dependencias de frontend
+```bash
+npm install
+npm run build
+```
 
-## Laravel Sponsors
+### 4. Configurar archivo de entorno
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Copia el archivo de ejemplo y renómbralo a `.env`:
 
-### Premium Partners
+```bash
+cp .env.example .env
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=db_gestion_proyectos
+DB_USERNAME=tu_usuario
+DB_PASSWORD=tu_contraseña
 
-## Contributing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 5. Generar clave de la aplicación
+```bash
+php artisan key:generate
+```
 
-## Code of Conduct
+### 6. Ejecutar migraciones y seeders
+Este comando creará todas las tablas y los roles necesarios (Admin y Usuario).
+```bash
+php artisan migrate:fresh --seed
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 7. Levantar el servidor
+Sino utiliza ningún servidor local puede levantar el servidor solo ejecutando este comando: 
+```bash
+php artisan serve
+```
+## Roles y Autenticación
 
-## Security Vulnerabilities
+El sistema implementa autenticación de usuarios utilizando **Laravel UI**, proporcionando las funcionalidades de registro, inicio de sesión y restablecimiento de contraseña.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+La autorización se gestiona mediante un sistema de **roles basado en una tabla relacional** y un **middleware personalizado**, garantizando el control de acceso a rutas protegidas.
 
-## License
+### Roles definidos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- **Administrador**
+  - Acceso exclusivo a la ruta protegida `/admin`
+  - Permisos completos sobre el sistema
+
+- **Usuario**
+  - Acceso estándar a la gestión de proyectos y tareas
+
+### Control de acceso
+
+La ruta `/admin` se encuentra protegida y solo puede ser accedida por usuarios con el rol **Administrador**.  
+Los usuarios sin este rol reciben una respuesta de acceso denegado.
+
+> **Nota:** Para pruebas, el rol de administrador puede asignarse mediante el seeder o directamente desde la base de datos utilizando pgAdmin.
+
+## Modelo de Datos
+
+El sistema se basa en un modelo relacional diseñado para la gestión estructurada de proyectos y sus tareas asociadas, utilizando PostgreSQL como sistema gestor de base de datos.
+
+### Entidades principales
+
+#### Proyectos
+- `id`
+- `name`
+- `description`
+- `created_at`
+- `updated_at`
+
+#### Tareas
+- `id`
+- `title`
+- `description`
+- `status`
+- `project_id`
+- `created_at`
+- `updated_at`
+
+### Estados de las tareas
+Las tareas pueden encontrarse en uno de los siguientes estados:
+
+- `pendiente`
+- `en_progreso`
+- `completada`
+
+### Relaciones
+
+- Un **Proyecto** puede tener múltiples **Tareas**.
+- Una **Tarea** pertenece a un único **Proyecto**.
+
+Esta relación se implementa como **uno a muchos (1:N)** mediante la clave foránea `project_id` en la tabla `tasks`, con **eliminación en cascada** para garantizar la integridad referencial.
+
+### Integridad y consistencia
+
+- Uso de claves foráneas para asegurar la relación entre proyectos y tareas.
+- Eliminación automática de tareas asociadas al eliminar un proyecto.
+- Validación de estados de tareas a nivel de aplicación.
+
+## API REST
+
+El sistema expone una **API REST** que permite la integración con clientes externos y el consumo de datos en formato **JSON**.  
+Los endpoints están diseñados siguiendo principios RESTful y reflejan la estructura del modelo de datos.
+
+### Endpoints disponibles
+
+#### Proyectos
+
+| Método | Endpoint | Descripción |
+|------|--------|-------------|
+| GET | `/api/projects` | Obtiene la lista de proyectos con sus tareas |
+| POST | `/api/projects` | Crea un nuevo proyecto |
+| GET | `/api/projects/{id}` | Obtiene el detalle de un proyecto específico |
+
+#### Tareas
+
+| Método | Endpoint | Descripción |
+|------|--------|-------------|
+| PATCH | `/api/tasks/{id}` | Actualiza parcialmente el estado de una tarea |
+
+### Formato de respuesta
+
+Las respuestas de la API se devuelven en formato **JSON**, incluyendo los datos solicitados y los códigos de estado HTTP correspondientes.
+
+## Interfaz de Usuario
+
+La interfaz de usuario fue desarrollada utilizando **Blade Templates** y **Bootstrap**, basándose en el scaffolding generado por **Laravel UI (Auth)**.
+
+### Características principales
+
+- Formularios de **Login**, **Registro** y **Restablecimiento de contraseña** completamente funcionales.
+- Traducción y personalización de las vistas de autenticación al idioma español.
+- Vistas estructuradas para la gestión de **Proyectos** y **Tareas**.
+- Formularios con validación de datos y mensajes de error claros para el usuario.
+- Navegación sencilla e intuitiva, orientada a una experiencia de usuario clara y funcional.
+
+### Enfoque de diseño
+
+La interfaz prioriza la **claridad**, **usabilidad** y **consistencia visual**, manteniendo una estructura simple y alineada a los requerimientos funcionales de la prueba técnica, sin depender de componentes externos innecesarios.
+
+
