@@ -8,14 +8,23 @@ use Illuminate\Http\Request;
 
 class ProjectApiController extends Controller
 {
-    // Listar todos los proyectos con sus tareas
+    // Listar solo los proyectos del usuario autenticado
     public function index()
     {
-        $projects = Project::with('tasks')->get();
+        /** @var \App\Models\User $user */
+        // Usamos el ID del usuario autenticado por Sanctum
+        $user = auth()->user();
+        
+
+        if (!$user) {
+        return response()->json(['message' => 'No autenticado'], 401);
+        }
+
+        $projects = $user->projects()->with('tasks')->get();
         return response()->json($projects, 200);
     }
 
-    // Crear un nuevo proyecto vía API
+    // Crear un proyecto asignado automáticamente al usuario
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -23,27 +32,21 @@ class ProjectApiController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        $project = Project::create($validated);
+        // Se crea a través de la relación para asignar el user_id
+        $project = auth()->user()->projects()->create($validated);
+        
         return response()->json($project, 201);
     }
 
-    // Mostrar un proyecto específico
-    public function show(Project $project)
+    // Mostrar un proyecto solo si le pertenece al usuario
+    public function show($id)
     {
-        return response()->json($project->load('tasks'), 200);
-    }
+        $project = auth()->user()->projects()->with('tasks')->find($id);
 
-    // Actualizar proyecto 
-    public function update(Request $request, Project $project)
-    {
-        $project->update($request->all());
+        if (!$project) {
+            return response()->json(['message' => 'Proyecto no encontrado o no autorizado'], 404);
+        }
+
         return response()->json($project, 200);
-    }
-
-    // Eliminar proyecto 
-    public function destroy(Project $project)
-    {
-        $project->delete();
-        return response()->json(['message' => 'Proyecto eliminado'], 200);
     }
 }

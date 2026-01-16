@@ -16,8 +16,9 @@ class ProjectController extends Controller
 
     public function index()
     {
+        
         //Aquí se listaran los proyectos
-        $projects = Project::all();
+        $projects = auth()->user()->projects; 
         return view('projects.index', compact('projects'));
     }
 
@@ -32,14 +33,15 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         //Guardar el nuevo proyecto
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+        $validated = $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'nullable|string',
         ]);
 
-        Project::create($request->all());
+        // Creamos el proyecto a través del usuario autenticado
+        auth()->user()->projects()->create($validated);
 
-        return redirect()->route('projects.index')->with('success', 'Proyecto creado exitosamente.');
+        return redirect()->route('projects.index')->with('success', 'Proyecto creado.');
     }
 
     
