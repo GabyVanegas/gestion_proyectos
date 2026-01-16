@@ -66,6 +66,7 @@ El nombre de la base de datos debe configurarse previamente en PostgreSQL:
 
 ```sql
 CREATE DATABASE db_gestion_proyectos;
+```
 
 ### 7. Levantar el servidor
 Sino utiliza ningún servidor local puede levantar el servidor solo ejecutando este comando: 
