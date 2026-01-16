@@ -60,6 +60,13 @@ Este comando creará todas las tablas y los roles necesarios (Admin y Usuario).
 php artisan migrate:fresh --seed
 ```
 
+### 6.5 Creación de la base de datos
+
+El nombre de la base de datos debe configurarse previamente en PostgreSQL:
+
+```sql
+CREATE DATABASE db_gestion_proyectos;
+
 ### 7. Levantar el servidor
 Sino utiliza ningún servidor local puede levantar el servidor solo ejecutando este comando: 
 ```bash
