@@ -22,17 +22,31 @@ class TaskController extends Controller
         return redirect()->route('projects.show', $project)->with('success', 'Tarea creada.');
     }
 
-    // Actualizar estado de una tarea
-    public function update(Request $request, Task $task)
-    {
-        $task->update($request->only('status'));
-        return back()->with('success', 'Estado actualizado.');
-    }
-
     // Eliminar tarea
     public function destroy(Task $task)
     {
         $task->delete();
         return back()->with('success', 'Tarea eliminada.');
+    }
+
+    // Mostrar formulario de edición
+    public function edit(Task $task)
+    {
+        return view('tasks.edit', compact('task'));
+    }
+
+    // Procesar la actualización
+    public function update(Request $request, Task $task)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'status' => 'required|in:pendiente,en progreso,completada',
+        'description' => 'nullable|string',
+        ]);
+
+        $task->update($request->all());
+        // Redirigimos de vuelta al proyecto al que pertenece la tarea
+        return redirect()->route('projects.show', $task->project_id)
+                     ->with('success', 'Tarea actualizada correctamente.');
     }
 }

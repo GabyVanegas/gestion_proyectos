@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    {{-- Formulario para Añadir Tarea con Descripción --}}
+    {{-- Formulario para Añadir Tarea --}}
     <div class="card mb-4 border-primary shadow-sm">
         <div class="card-header bg-primary text-white">Añadir Nueva Tarea</div>
         <div class="card-body">
@@ -46,7 +46,8 @@
     <div class="list-group shadow-sm">
         @forelse($project->tasks as $task)
             <div class="list-group-item list-group-item-action">
-                <div class="d-flex w-100 justify-content-between align-items-start">
+                <div class="d-flex w-100 justify-content-between align-items-center">
+                    {{-- Información de la Tarea (Izquierda) --}}
                     <div>
                         <h5 class="mb-1 fw-bold">{{ $task->title }}</h5>
                         <p class="mb-1 text-secondary small">{{ $task->description ?? 'Sin descripción adicional.' }}</p>
@@ -54,13 +55,23 @@
                             {{ ucfirst($task->status) }}
                         </span>
                     </div>
-                    <form action="{{ route('tasks.destroy', $task) }}" method="POST">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Eliminar tarea [cite: 39]">
-                            <i class="bi bi-trash"></i> Eliminar
-                        </button>
-                    </form>
+
+                    {{-- Botones de Acción (Derecha) --}}
+                    <div class="d-flex gap-2">
+                        {{-- Botón Editar --}}
+                        <a href="{{ route('tasks.edit', $task) }}" class="btn btn-sm btn-outline-warning" title="Editar tarea">
+                             Editar
+                        </a>
+
+                        {{-- Botón Eliminar --}}
+                        <form action="{{ route('tasks.destroy', $task) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('¿Seguro que quieres eliminar esta tarea?')" title="Eliminar tarea">
+                                 Eliminar
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         @empty

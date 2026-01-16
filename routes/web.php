@@ -23,3 +23,4 @@ Route::resource('projects', ProjectController::class);
 Route::post('projects/{project}/tasks', [TaskController::class, 'store'])->name('tasks.store');
 Route::patch('tasks/{task}', [TaskController::class, 'update'])->name('tasks.update');
 Route::delete('tasks/{task}', [TaskController::class, 'destroy'])->name('tasks.destroy');
+Route::get('tasks/{task}/edit', [TaskController::class, 'edit'])->name('tasks.edit');
